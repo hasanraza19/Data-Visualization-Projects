@@ -1,0 +1,172 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart', 'controls']}); // load core charts(common charts) and control packages
+      google.charts.setOnLoadCallback(drawChart); //when packages load, go to drawChart method
+      
+      function drawChart() { //drawChart method
+        //variable contains url to spreadsheet
+        var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1OKbUcLTP_MkERddvrBWimt_1Nf_ad75na_QHZeUfZXw/gviz/tq?tq=');
+        query.send(handleQueryResponse);//try to access spreadsheet, go to handleQueryResponse method
+      }
+      
+      
+      function handleQueryResponse(response) { //handleQueryResponse method
+        if (response.isError()) { //if query returned an error then show error and return
+        alert('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+        return;
+        }
+        
+        var data = response.getDataTable(); // otherwise, store sheet data into datatable variable
+        
+        
+        
+        var columnChart = new google.visualization.ChartWrapper({ //create chartwrapper
+                'chartType': 'Bar', //"Bar" graph is material design column chart
+                'containerId': 'column_chart_div', 
+                'view': { 'columns': [0,4] }, // columns 0 and 4 correspond to team and attendance
+                'options': {
+                    hAxis: { title: 'Home Game Attendance' },
+                    vAxis: { format: '###'},
+                  
+                  
+                  
+                  
+                }
+            });
+        
+        var columnChart2 = new google.visualization.ChartWrapper({//create chartwrapper
+                'chartType': 'ColumnChart', //column chart is vertical bar chart
+                'containerId': 'column_chart2_div',
+                'view': { 'columns': [0,7,8] }, // columns team, wins, losses
+          
+                'options': {
+                    hAxis: { title: 'Wins/Losses' },
+                    vAxis: { format: '###'},
+                  
+                  
+                  
+                  
+                  
+                }
+            });
+        
+        var scatterChart = new google.visualization.ChartWrapper({ //create chartwrapper
+                'chartType': 'ScatterChart',
+                'containerId': 'scatter_chart_div',
+                'view': { 'columns': [5,6] }, //columns runs scored, runs allowed, graph shows all team ratios 
+          
+                'options': {
+                    hAxis: { title: 'Runs Scored : Runs Allowed' },
+                    vAxis: { format: '###'},
+                  
+                  
+                  
+                  
+                  
+                }
+            });
+        
+        
+        var divisionFilter = new google.visualization.ControlWrapper({ //create wrapper for control
+                'controlType': 'CategoryFilter', //want to choose out of all possible categories
+                'containerId': 'divisionFilter_div',
+                'options': {
+                    'filterColumnLabel': 'Division', //from division column
+                    'ui': {
+                        'labelStacking': 'vertical',
+                        'allowTyping': false,
+                        'allowMultiple': true,
+                    }
+                }
+            });
+        
+        var leagueFilter = new google.visualization.ControlWrapper({ //create wrapper for control
+                'controlType': 'CategoryFilter',
+                'containerId': 'leagueFilter_div',
+                'options': {
+                    'filterColumnLabel': 'League', //from league column
+                    'ui': {
+                        'labelStacking': 'vertical',
+                        'allowTyping': false,
+                        'allowMultiple': true,
+                    }
+                }
+            });
+        
+        
+        var seasonFilter = new google.visualization.ControlWrapper({ //create wrapper for control
+                'controlType': 'CategoryFilter',
+                'containerId': 'seasonFilter_div',
+                'options': {
+                    'filterColumnLabel': 'Season',
+                    'ui': {
+                        'labelStacking': 'vertical',
+                        'allowTyping': false,
+                        'allowMultiple': false,
+                        'allowNone': false, //force user to view data one season at a time
+                    }
+                }
+            });
+        
+       
+        
+        
+        
+        
+        var dashboard = new google.visualization.Dashboard(document.getElementById('dashboard_div')); //create dashboard obj
+       dashboard.bind([divisionFilter, leagueFilter, seasonFilter], [columnChart, columnChart2, scatterChart]); //link all controls to all charts
+        
+          dashboard.draw(data); //draw db, pass data variable
+
+        
+          
+        
+          
+      }
+      
+      
+      
+      
+      </script>
+    
+  </head>
+  <body>
+    <div id="dashboard_div">
+        <table>
+            <tr>
+                <td>
+                  
+                  <div id="seasonFilter_div" style="">
+                    </div>
+                    <div id="divisionFilter_div" style="">
+                    </div>
+                  <div id="leagueFilter_div" style="">
+                    </div>
+                  
+                  
+                    
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                </td>
+                <td>
+                    
+                    <div id="column_chart2_div" style="height: 400px; width: 1600px; border-style: groove;">
+                    </div>
+                    <div id="column_chart_div" style="height: 400px; width: 1600px; border-style: groove;">
+                    </div>
+                  <div id="scatter_chart_div" style="height: 400px; width: 1600px; border-style: groove;">
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+  </body>
+</html>
